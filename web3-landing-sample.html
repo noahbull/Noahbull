@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexaVault — DeFi Reimagined</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #080810;
+    --white: #f0f0f8;
+    --acid: #c8ff00;
+    --dim: #1a1a2e;
+    --muted: #444466;
+    --glow: rgba(200,255,0,0.18);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--acid);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.2s, height 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--acid);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease, width 0.3s, height 0.3s, opacity 0.3s;
+    opacity: 0.5;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200,255,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,255,0,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 4rem;
+    border-bottom: 1px solid rgba(200,255,0,0.1);
+    backdrop-filter: blur(12px);
+    background: rgba(8,8,16,0.7);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+  .logo span { color: var(--acid); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--acid); }
+
+  .nav-cta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--acid);
+    color: var(--black);
+    border: none;
+    padding: 0.6rem 1.4rem;
+    cursor: none;
+    font-weight: 400;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10rem 4rem 6rem;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .hero-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--acid);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3.5rem, 9vw, 9rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    max-width: 900px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+
+  .hero h1 .outline {
+    -webkit-text-stroke: 1px var(--white);
+    color: transparent;
+  }
+  .hero h1 .acid { color: var(--acid); }
+
+  .hero-sub {
+    margin-top: 3rem;
+    max-width: 440px;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+
+  .hero-actions {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+
+  .btn-primary {
+    background: var(--acid);
+    color: var(--black);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 1rem 2.4rem;
+    border: none;
+    cursor: none;
+    transition: box-shadow 0.3s;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 40px var(--glow);
+  }
+
+  .btn-ghost {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--white);
+    background: transparent;
+    border: 1px solid var(--muted);
+    padding: 1rem 2.4rem;
+    cursor: none;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .btn-ghost:hover { border-color: var(--acid); color: var(--acid); }
+
+  /* Floating orb */
+  .orb {
+    position: absolute;
+    right: -200px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, rgba(200,255,0,0.12), transparent 70%);
+    filter: blur(60px);
+    animation: pulse 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.8; }
+    50% { transform: translateY(-50%) scale(1.08); opacity: 1; }
+  }
+
+  /* STATS */
+  .stats {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid rgba(200,255,0,0.12);
+    border-bottom: 1px solid rgba(200,255,0,0.12);
+  }
+
+  .stat {
+    padding: 3rem 4rem;
+    border-right: 1px solid rgba(200,255,0,0.12);
+    opacity: 0;
+    animation: fadeUp 0.8s forwards;
+  }
+  .stat:last-child { border-right: none; }
+  .stat:nth-child(1) { animation-delay: 0.3s; }
+  .stat:nth-child(2) { animation-delay: 0.5s; }
+  .stat:nth-child(3) { animation-delay: 0.7s; }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.2rem;
+    font-weight: 800;
+    color: var(--acid);
+    line-height: 1;
+  }
+  .stat-label {
+    margin-top: 0.5rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* FEATURES */
+  .features {
+    position: relative;
+    z-index: 1;
+    padding: 8rem 4rem;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--acid);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 600px;
+    margin-bottom: 5rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(200,255,0,0.1);
+  }
+
+  .feature-card {
+    background: var(--black);
+    padding: 3rem;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--glow);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .feature-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .feature-desc {
+    font-size: 0.78rem;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+
+  /* HOW IT WORKS */
+  .how {
+    position: relative;
+    z-index: 1;
+    padding: 8rem 4rem;
+    background: var(--dim);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem;
+    margin-top: 4rem;
+  }
+
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    color: rgba(200,255,0,0.12);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .step-desc {
+    font-size: 0.75rem;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+
+  /* CTA SECTION */
+  .cta-section {
+    position: relative;
+    z-index: 1;
+    padding: 10rem 4rem;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(200,255,0,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.5rem, 6vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 2rem;
+  }
+
+  .cta-section p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    max-width: 400px;
+    margin: 0 auto 3rem;
+    line-height: 1.9;
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 4rem;
+    border-top: 1px solid rgba(200,255,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  .footer-logo span { color: var(--acid); }
+
+  .footer-copy {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .footer-links a {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--acid); }
+
+  /* Ticker */
+  .ticker {
+    background: var(--acid);
+    color: var(--black);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.6rem 0;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 20s linear infinite;
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 8rem 1.5rem 4rem; }
+    .stats { grid-template-columns: 1fr; }
+    .stat { border-right: none; border-bottom: 1px solid rgba(200,255,0,0.12); padding: 2rem 1.5rem; }
+    .features { padding: 5rem 1.5rem; }
+    .features-grid { grid-template-columns: 1fr; }
+    .how { padding: 5rem 1.5rem; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .cta-section { padding: 6rem 1.5rem; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 2rem 1.5rem; }
+    .footer-links { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="logo">Nexa<span>Vault</span></div>
+  <ul class="nav-links">
+    <li><a href="#">Protocol</a></li>
+    <li><a href="#">Vaults</a></li>
+    <li><a href="#">Governance</a></li>
+    <li><a href="#">Docs</a></li>
+  </ul>
+  <button class="nav-cta">Launch App</button>
+</nav>
+
+<!-- Ticker -->
+<div style="position:fixed; top: 65px; left:0; right:0; z-index:99;">
+  <div class="ticker">
+    <span class="ticker-inner">
+      ETH $3,842.10 &nbsp;▲ +2.4% &nbsp;·&nbsp; BTC $67,120 &nbsp;▲ +1.8% &nbsp;·&nbsp; SOL $188.44 &nbsp;▲ +4.2% &nbsp;·&nbsp; TVL $2.4B &nbsp;·&nbsp; APY up to 34.7% &nbsp;·&nbsp; 48,200 active vaults &nbsp;·&nbsp; 
+      ETH $3,842.10 &nbsp;▲ +2.4% &nbsp;·&nbsp; BTC $67,120 &nbsp;▲ +1.8% &nbsp;·&nbsp; SOL $188.44 &nbsp;▲ +4.2% &nbsp;·&nbsp; TVL $2.4B &nbsp;·&nbsp; APY up to 34.7% &nbsp;·&nbsp; 48,200 active vaults &nbsp;·&nbsp;
+    </span>
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="orb"></div>
+  <p class="hero-tag">// Next-gen DeFi infrastructure</p>
+  <h1>
+    Yield<br>
+    <span class="outline">Without</span><br>
+    <span class="acid">Limits</span>
+  </h1>
+  <p class="hero-sub">
+    NexaVault is a non-custodial yield protocol built for serious on-chain capital. Automated strategies, zero lock-ups, battle-tested smart contracts.
+  </p>
+  <div class="hero-actions">
+    <button class="btn-primary">Enter App</button>
+    <button class="btn-ghost">Read Whitepaper</button>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">$2.4B</div>
+    <div class="stat-label">Total Value Locked</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">34.7%</div>
+    <div class="stat-label">Peak APY</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">48K+</div>
+    <div class="stat-label">Active Wallets</div>
+  </div>
+</div>
+
+<!-- Features -->
+<section class="features">
+  <p class="section-label">// Core features</p>
+  <h2 class="section-title">Built for capital that never sleeps</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">⚡</span>
+      <div class="feature-title">Auto-Compounding</div>
+      <p class="feature-desc">Rewards are harvested and reinvested on-chain every 4 hours, maximizing your effective APY without lifting a finger.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔐</span>
+      <div class="feature-title">Audited Contracts</div>
+      <p class="feature-desc">Every line of code has been audited by Certik and Chainsecurity. No proxies, no admin keys, no surprises.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌐</span>
+      <div class="feature-title">Multi-Chain</div>
+      <p class="feature-desc">Deploy capital across Ethereum, Arbitrum, Base, and Solana from a single dashboard with unified reporting.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎯</span>
+      <div class="feature-title">Strategy Router</div>
+      <p class="feature-desc">Our algorithm routes your funds to the highest-yield opportunities in real time, rebalancing automatically as markets shift.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📊</span>
+      <div class="feature-title">On-Chain Analytics</div>
+      <p class="feature-desc">Full transparency. Track every transaction, fee, and yield source directly on-chain. Your data, always verifiable.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🗳️</span>
+      <div class="feature-title">DAO Governance</div>
+      <p class="feature-desc">NEXA token holders vote on protocol upgrades, fee structures, and new vault strategies. Power to the community.</p>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how">
+  <p class="section-label">// How it works</p>
+  <h2 class="section-title">Simple as 1, 2, 3, 4</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Connect Wallet</div>
+      <p class="step-desc">Link any EVM-compatible wallet. MetaMask, Rabby, WalletConnect — your choice, your keys.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Choose a Vault</div>
+      <p class="step-desc">Browse curated strategies by risk level, chain, and token. Filter by APY, TVL, or audit status.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Deposit Assets</div>
+      <p class="step-desc">Deposit any supported token. Receive vault shares that represent your proportional ownership.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Watch It Grow</div>
+      <p class="step-desc">Yields auto-compound every 4 hours. Withdraw anytime — no lockups, no penalties, no waiting.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ready to<br><span style="color:var(--acid)">earn more</span><br>on-chain?</h2>
+  <p>Join 48,000+ wallets already earning optimized yields on NexaVault.</p>
+  <button class="btn-primary" style="font-size:0.9rem; padding:1.2rem 3rem;">Launch App — It's Free</button>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">Nexa<span>Vault</span></div>
+  <span class="footer-copy">© 2025 NexaVault Protocol. All rights reserved.</span>
+  <ul class="footer-links">
+    <li><a href="#">Twitter</a></li>
+    <li><a href="#">Discord</a></li>
+    <li><a href="#">GitHub</a></li>
+    <li><a href="#">Docs</a></li>
+  </ul>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Hover expand
+  document.querySelectorAll('button, a, .feature-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      ring.style.width = '55px';
+      ring.style.height = '55px';
+      ring.style.opacity = '0.3';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+      ring.style.opacity = '0.5';
+    });
+  });
+
+  // Counter animation
+  function animateCounter(el, target, suffix = '') {
+    let start = 0;
+    const duration = 2000;
+    const step = timestamp => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const val = eased * target;
+      el.textContent = (target < 100 ? val.toFixed(1) : Math.floor(val).toLocaleString()) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const nums = [
+          { el: document.querySelectorAll('.stat-num')[0], val: 2.4, suffix: 'B' },
+          { el: document.querySelectorAll('.stat-num')[1], val: 34.7, suffix: '%' },
+          { el: document.querySelectorAll('.stat-num')[2], val: 48, suffix: 'K+' },
+        ];
+        nums.forEach(n => {
+          n.el.textContent = '';
+          animateCounter(n.el, n.val, n.suffix);
+        });
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  observer.observe(document.querySelector('.stats'));
+</script>
+</body>
+</html>

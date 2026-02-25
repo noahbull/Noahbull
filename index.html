@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noahbull72.devstudio — Crypto Pages & Smart Contracts</title>
+<meta name="description" content="Professional Web3 landing pages and smart contracts. NFT projects, token presales, DeFi protocols. Fast delivery, crypto payment.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@300;400;700;900&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #0a0a0a;
+  --surface: #111111;
+  --card:    #161616;
+  --border:  rgba(255,255,255,0.07);
+  --white:   #f0f0f0;
+  --muted:   #555;
+  --dim:     #333;
+  --orange:  #ff5c00;
+  --orange2: #ff8c42;
+  --glow:    rgba(255,92,0,0.15);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Epilogue', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Subtle noise texture */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9000; opacity: 0.5;
+}
+
+/* Cursor */
+#dot { position: fixed; width: 7px; height: 7px; background: var(--orange); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); }
+#ring { position: fixed; width: 32px; height: 32px; border: 1.5px solid var(--orange); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); opacity: 0.4; transition: width .25s, height .25s, opacity .25s; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.4rem 5vw;
+  border-bottom: 1px solid var(--border);
+  background: rgba(10,10,10,0.85); backdrop-filter: blur(20px);
+}
+.nav-logo {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem; font-weight: 500;
+  letter-spacing: 0.05em; color: var(--white);
+}
+.nav-logo span { color: var(--orange); }
+.nav-menu { display: flex; gap: 2.5rem; list-style: none; }
+.nav-menu a { font-size: 0.78rem; color: var(--muted); text-decoration: none; letter-spacing: 0.06em; transition: color .2s; }
+.nav-menu a:hover { color: var(--orange); }
+.nav-hire {
+  font-family: 'Fira Code', monospace; font-size: 0.72rem;
+  background: var(--orange); color: #000;
+  border: none; padding: 0.6rem 1.5rem; cursor: none; font-weight: 500;
+  transition: background .2s, box-shadow .3s;
+}
+.nav-hire:hover { background: var(--orange2); box-shadow: 0 0 30px var(--glow); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 10rem 5vw 6rem;
+  position: relative; overflow: hidden;
+}
+
+/* Diagonal grid */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,92,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,92,0,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  transform: skewY(-6deg) scale(1.2);
+  pointer-events: none;
+}
+
+.hero-glow {
+  position: absolute; bottom: -200px; right: -100px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,92,0,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  animation: breathe 6s ease-in-out infinite;
+}
+@keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
+
+.hero-eyebrow {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.7rem; letter-spacing: 0.2em; color: var(--orange);
+  margin-bottom: 1.8rem;
+  opacity: 0; animation: up .8s .2s forwards;
+}
+
+.hero h1 {
+  font-weight: 900;
+  font-size: clamp(3rem, 8vw, 8rem);
+  line-height: 0.92; letter-spacing: -0.03em;
+  opacity: 0; animation: up .9s .4s forwards;
+}
+.hero h1 .ghost {
+  -webkit-text-stroke: 1px rgba(240,240,240,0.25);
+  color: transparent;
+}
+.hero h1 .pop { color: var(--orange); }
+
+.hero-sub {
+  margin-top: 2.5rem; max-width: 480px;
+  font-size: 1rem; font-weight: 300; line-height: 1.9; color: var(--muted);
+  opacity: 0; animation: up .9s .6s forwards;
+}
+
+.hero-ctas {
+  display: flex; gap: 1rem; margin-top: 3rem; flex-wrap: wrap;
+  opacity: 0; animation: up .9s .8s forwards;
+}
+.btn-hot {
+  font-family: 'Fira Code', monospace; font-size: 0.78rem; letter-spacing: 0.08em;
+  background: var(--orange); color: #000; border: none;
+  padding: 1rem 2.5rem; cursor: none; font-weight: 500;
+  transition: box-shadow .3s, background .2s;
+}
+.btn-hot:hover { background: var(--orange2); box-shadow: 0 0 40px var(--glow); }
+.btn-line {
+  font-family: 'Fira Code', monospace; font-size: 0.78rem; letter-spacing: 0.08em;
+  background: none; color: var(--white); border: 1px solid var(--border);
+  padding: 1rem 2rem; cursor: none;
+  transition: border-color .3s, color .3s;
+}
+.btn-line:hover { border-color: var(--orange); color: var(--orange); }
+
+/* Availability pill */
+.avail {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  margin-top: 2rem;
+  font-family: 'Fira Code', monospace; font-size: 0.65rem; letter-spacing: 0.1em;
+  color: #44ff88; border: 1px solid rgba(68,255,136,0.2);
+  padding: 0.4rem 1rem; width: fit-content;
+  opacity: 0; animation: up .9s 1s forwards;
+}
+.avail-dot { width: 6px; height: 6px; background: #44ff88; border-radius: 50%; box-shadow: 0 0 6px #44ff88; animation: blink 1.5s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ── STATS BAR ── */
+.stats-bar {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  position: relative; z-index: 1;
+}
+.stat-cell {
+  padding: 2.5rem 5vw; border-right: 1px solid var(--border);
+  opacity: 0; animation: up .7s forwards;
+}
+.stat-cell:last-child { border-right: none; }
+.stat-cell:nth-child(1){ animation-delay:.1s }
+.stat-cell:nth-child(2){ animation-delay:.2s }
+.stat-cell:nth-child(3){ animation-delay:.3s }
+.stat-cell:nth-child(4){ animation-delay:.4s }
+.stat-n { font-family: 'Epilogue', sans-serif; font-size: 2.2rem; font-weight: 900; color: var(--orange); line-height: 1; }
+.stat-l { font-family: 'Fira Code', monospace; font-size: 0.62rem; letter-spacing: 0.15em; color: var(--muted); margin-top: 0.4rem; text-transform: uppercase; }
+
+/* ── SECTION SHARED ── */
+.section-tag {
+  font-family: 'Fira Code', monospace; font-size: 0.65rem;
+  letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 1rem;
+}
+.section-title {
+  font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 900;
+  line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1rem;
+}
+.section-title span { color: var(--orange); }
+
+/* ── SERVICES ── */
+.services { padding: 7rem 5vw; position: relative; z-index: 1; }
+.services-intro { max-width: 560px; margin-bottom: 4rem; }
+.services-intro p { font-size: 0.9rem; font-weight: 300; color: var(--muted); line-height: 1.9; margin-top: 1rem; }
+
+.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
+.service-card {
+  background: var(--card); padding: 2.5rem;
+  position: relative; overflow: hidden;
+  transition: background .3s;
+}
+.service-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.service-card:hover { background: #1a1a1a; }
+.service-card:hover::before { opacity: 1; }
+
+.service-icon {
+  font-size: 1.6rem; margin-bottom: 1.2rem; display: block;
+  filter: grayscale(1); transition: filter .3s;
+}
+.service-card:hover .service-icon { filter: none; }
+.service-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+.service-desc { font-size: 0.78rem; font-weight: 300; color: var(--muted); line-height: 1.9; margin-bottom: 1.5rem; }
+.service-price {
+  font-family: 'Fira Code', monospace; font-size: 0.8rem;
+  color: var(--orange); letter-spacing: 0.05em;
+}
+.service-time {
+  font-family: 'Fira Code', monospace; font-size: 0.65rem;
+  color: var(--muted); margin-top: 0.2rem;
+}
+
+/* ── PORTFOLIO ── */
+.portfolio { padding: 7rem 5vw; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+.portfolio-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3.5rem; }
+.view-all { font-family: 'Fira Code', monospace; font-size: 0.68rem; letter-spacing: 0.12em; color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(255,92,0,0.3); padding-bottom: 0.2rem; transition: border-color .2s; }
+.view-all:hover { border-color: var(--orange); }
+
+.portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+.project-card {
+  background: var(--card); border: 1px solid var(--border);
+  overflow: hidden; transition: border-color .3s, transform .3s;
+  cursor: none; text-decoration: none; color: inherit; display: block;
+}
+.project-card:hover { border-color: rgba(255,92,0,0.35); transform: translateY(-4px); }
+
+.project-preview {
+  height: 200px; overflow: hidden; position: relative;
+  background: var(--surface);
+}
+.project-preview iframe {
+  width: 200%; height: 200%;
+  transform: scale(0.5); transform-origin: top left;
+  border: none; pointer-events: none;
+}
+.project-preview-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, var(--card) 100%);
+}
+.project-preview-label {
+  position: absolute; top: 1rem; right: 1rem;
+  font-family: 'Fira Code', monospace; font-size: 0.6rem; letter-spacing: 0.1em;
+  background: rgba(255,92,0,0.9); color: #000; padding: 0.2rem 0.6rem;
+}
+
+.project-info { padding: 1.5rem; }
+.project-type {
+  font-family: 'Fira Code', monospace; font-size: 0.6rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 0.5rem;
+}
+.project-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.project-desc { font-size: 0.75rem; font-weight: 300; color: var(--muted); line-height: 1.8; margin-bottom: 1.2rem; }
+.project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tag {
+  font-family: 'Fira Code', monospace; font-size: 0.58rem; letter-spacing: 0.08em;
+  border: 1px solid var(--border); padding: 0.2rem 0.6rem; color: var(--muted);
+}
+.project-link {
+  display: block; text-align: center; margin: 0 1.5rem 1.5rem;
+  font-family: 'Fira Code', monospace; font-size: 0.68rem; letter-spacing: 0.1em;
+  background: var(--border); color: var(--white); padding: 0.7rem;
+  text-decoration: none; transition: background .2s, color .2s;
+}
+.project-link:hover { background: var(--orange); color: #000; }
+
+/* ── SMART CONTRACTS ── */
+.contracts { padding: 7rem 5vw; background: var(--surface); border-top: 1px solid var(--border); position: relative; z-index: 1; }
+.contracts-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3.5rem; }
+
+.contract-card {
+  background: var(--card); border: 1px solid var(--border);
+  padding: 2rem; transition: border-color .3s;
+}
+.contract-card:hover { border-color: rgba(255,92,0,0.3); }
+
+.contract-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem; }
+.contract-icon {
+  width: 40px; height: 40px; background: rgba(255,92,0,0.1);
+  border: 1px solid rgba(255,92,0,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+}
+.contract-chain {
+  font-family: 'Fira Code', monospace; font-size: 0.6rem; letter-spacing: 0.1em;
+  color: var(--muted); border: 1px solid var(--border); padding: 0.2rem 0.5rem;
+}
+.contract-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+.contract-desc { font-size: 0.75rem; font-weight: 300; color: var(--muted); line-height: 1.8; margin-bottom: 1.5rem; }
+.contract-features { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1.5rem; }
+.contract-features li {
+  font-family: 'Fira Code', monospace; font-size: 0.65rem; color: var(--muted);
+  padding-left: 1rem; position: relative;
+}
+.contract-features li::before { content: '✓'; position: absolute; left: 0; color: var(--orange); }
+.contract-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 1.2rem; border-top: 1px solid var(--border); }
+.contract-price { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--orange); }
+.contract-view {
+  font-family: 'Fira Code', monospace; font-size: 0.65rem; letter-spacing: 0.08em;
+  color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(255,92,0,0.3);
+  transition: border-color .2s;
+}
+.contract-view:hover { border-color: var(--orange); }
+
+/* ── HOW IT WORKS ── */
+.process { padding: 7rem 5vw; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+.process-steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; margin-top: 4rem; position: relative; }
+.process-steps::before {
+  content: '';
+  position: absolute; top: 2rem; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
+}
+.step { padding: 0 2rem; text-align: center; }
+.step-circle {
+  width: 4rem; height: 4rem; border: 1px solid var(--orange);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-family: 'Fira Code', monospace; font-size: 1rem; color: var(--orange);
+  background: var(--bg);
+  position: relative; z-index: 1;
+  transition: background .3s, box-shadow .3s;
+}
+.step:hover .step-circle { background: rgba(255,92,0,0.1); box-shadow: 0 0 20px var(--glow); }
+.step-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.6rem; }
+.step-desc { font-size: 0.75rem; font-weight: 300; color: var(--muted); line-height: 1.8; }
+
+/* ── PRICING ── */
+.pricing { padding: 7rem 5vw; background: var(--surface); border-top: 1px solid var(--border); position: relative; z-index: 1; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3.5rem; }
+
+.price-card {
+  background: var(--card); border: 1px solid var(--border); padding: 2.5rem;
+  position: relative; transition: border-color .3s;
+}
+.price-card:hover { border-color: rgba(255,92,0,0.3); }
+.price-card.featured { border-color: var(--orange); }
+.price-card.featured::before {
+  content: 'MOST POPULAR';
+  position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+  font-family: 'Fira Code', monospace; font-size: 0.55rem; letter-spacing: 0.15em;
+  background: var(--orange); color: #000; padding: 0.25rem 1rem; white-space: nowrap;
+}
+.price-tier { font-family: 'Fira Code', monospace; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 0.8rem; }
+.price-name { font-size: 1.3rem; font-weight: 900; margin-bottom: 1rem; }
+.price-amount { font-family: 'Epilogue', sans-serif; font-size: 3rem; font-weight: 900; line-height: 1; color: var(--orange); margin-bottom: 0.3rem; }
+.price-amount sup { font-size: 1.2rem; vertical-align: super; }
+.price-note { font-family: 'Fira Code', monospace; font-size: 0.62rem; color: var(--muted); margin-bottom: 2rem; }
+.price-items { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 2rem; }
+.price-items li { font-size: 0.8rem; font-weight: 300; color: var(--muted); padding-left: 1.2rem; position: relative; }
+.price-items li::before { content: '→'; position: absolute; left: 0; color: var(--orange); }
+.price-items li.inc { color: var(--white); }
+.price-btn {
+  width: 100%; font-family: 'Fira Code', monospace; font-size: 0.72rem;
+  letter-spacing: 0.12em; padding: 0.9rem; cursor: none; border: none;
+  background: var(--border); color: var(--white);
+  transition: background .2s, color .2s;
+}
+.price-btn:hover, .featured .price-btn { background: var(--orange); color: #000; }
+
+/* ── TESTIMONIALS ── */
+.testimonials { padding: 7rem 5vw; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+.testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3.5rem; }
+.testi-card { background: var(--card); border: 1px solid var(--border); padding: 2rem; }
+.testi-stars { color: var(--orange); font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+.testi-text { font-size: 0.83rem; font-weight: 300; color: var(--muted); line-height: 1.9; margin-bottom: 1.5rem; font-style: italic; }
+.testi-author { display: flex; align-items: center; gap: 0.8rem; }
+.testi-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--orange); display: flex; align-items: center; justify-content: center;
+  font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #000; font-weight: 700;
+  flex-shrink: 0;
+}
+.testi-name { font-weight: 700; font-size: 0.85rem; }
+.testi-role { font-family: 'Fira Code', monospace; font-size: 0.6rem; color: var(--muted); margin-top: 0.1rem; }
+
+/* ── CTA ── */
+.cta-section {
+  padding: 10rem 5vw; border-top: 1px solid var(--border);
+  text-align: center; position: relative; overflow: hidden; z-index: 1;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,92,0,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-section h2 {
+  font-size: clamp(2.5rem, 6vw, 6rem); font-weight: 900;
+  line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 2rem;
+}
+.cta-section h2 span { color: var(--orange); }
+.cta-section p { font-size: 0.9rem; color: var(--muted); max-width: 400px; margin: 0 auto 2.5rem; line-height: 1.9; font-weight: 300; }
+.cta-contacts {
+  display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 2rem;
+}
+.contact-chip {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-family: 'Fira Code', monospace; font-size: 0.7rem; letter-spacing: 0.1em;
+  border: 1px solid var(--border); padding: 0.6rem 1.2rem; color: var(--muted);
+  text-decoration: none; transition: border-color .2s, color .2s;
+}
+.contact-chip:hover { border-color: var(--orange); color: var(--orange); }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 5vw;
+  display: flex; justify-content: space-between; align-items: center;
+  position: relative; z-index: 1;
+}
+.footer-logo { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--white); }
+.footer-logo span { color: var(--orange); }
+.footer-copy { font-family: 'Fira Code', monospace; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.06em; }
+.footer-links { display: flex; gap: 1.8rem; list-style: none; }
+.footer-links a { font-size: 0.72rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+.footer-links a:hover { color: var(--orange); }
+
+/* Animations */
+@keyframes up { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  nav { padding: 1.2rem 4vw; }
+  .nav-menu { display: none; }
+  .hero { padding: 8rem 4vw 4rem; }
+  .stats-bar, .services-grid, .portfolio-grid, .contracts-grid, .process-steps, .pricing-grid, .testi-grid { grid-template-columns: 1fr; }
+  .stat-cell { border-right: none; border-bottom: 1px solid var(--border); }
+  .process-steps::before { display: none; }
+  .step { margin-bottom: 2rem; }
+  footer { flex-direction: column; gap: 1.2rem; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div id="dot"></div>
+<div id="ring"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">noahbull72<span>.devstudio</span></div>
+  <ul class="nav-menu">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#contracts">Contracts</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <button class="nav-hire">Hire Me →</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <p class="hero-eyebrow">// Web3 Design & Development</p>
+  <h1>
+    Pages that<br>
+    <span class="ghost">convert.</span><br>
+    Code that<br>
+    <span class="pop">ships.</span>
+  </h1>
+  <p class="hero-sub">
+    I build premium landing pages and smart contracts for NFT drops, token launches, and DeFi protocols. Fast delivery. Paid in crypto.
+  </p>
+  <div class="hero-ctas">
+    <button class="btn-hot" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'})">See My Work</button>
+    <button class="btn-line" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">View Pricing</button>
+  </div>
+  <div class="avail"><div class="avail-dot"></div>Available for new projects · 24–48hr turnaround</div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-cell"><div class="stat-n">3</div><div class="stat-l">Page templates ready</div></div>
+  <div class="stat-cell"><div class="stat-n">48h</div><div class="stat-l">Avg delivery time</div></div>
+  <div class="stat-cell"><div class="stat-n">$80+</div><div class="stat-l">Starting price</div></div>
+  <div class="stat-cell"><div class="stat-n">USDT</div><div class="stat-l">Crypto payments only</div></div>
+</div>
+
+<!-- SERVICES -->
+<section class="services reveal" id="services">
+  <div class="services-intro">
+    <p class="section-tag">// What I Build</p>
+    <h2 class="section-title">Full-stack Web3 <span>delivery</span></h2>
+    <p>From pixel-perfect landing pages to auditable smart contracts — I handle the full stack so your project launches fast and looks professional.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card">
+      <span class="service-icon">⚡</span>
+      <div class="service-name">DeFi Landing Pages</div>
+      <p class="service-desc">High-converting landing pages for DeFi protocols, yield products, and Web3 apps. Fully responsive with wallet connect UI.</p>
+      <div class="service-price">From $80</div>
+      <div class="service-time">⏱ 24hr delivery</div>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🖼</span>
+      <div class="service-name">NFT Project Sites</div>
+      <p class="service-desc">Full NFT launch pages with mint buttons, generative art previews, roadmap, team, and FAQ sections.</p>
+      <div class="service-price">From $120</div>
+      <div class="service-time">⏱ 36hr delivery</div>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🚀</span>
+      <div class="service-name">Token Presale Pages</div>
+      <p class="service-desc">IDO/presale pages with live countdown, fundraising progress bar, token calculator, tokenomics chart, and team section.</p>
+      <div class="service-price">From $120</div>
+      <div class="service-time">⏱ 36hr delivery</div>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🔐</span>
+      <div class="service-name">ERC-20 Token Contracts</div>
+      <p class="service-desc">Custom ERC-20 tokens with max supply, anti-bot protection, blacklist, burn function, and optional tax mechanism.</p>
+      <div class="service-price">From $100</div>
+      <div class="service-time">⏱ 24hr delivery</div>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">🎨</span>
+      <div class="service-name">NFT Mint Contracts</div>
+      <p class="service-desc">ERC-721A contracts with whitelist phase (Merkle tree), public mint, reveal mechanic, royalties, and ETH withdrawal.</p>
+      <div class="service-price">From $150</div>
+      <div class="service-time">⏱ 48hr delivery</div>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">💰</span>
+      <div class="service-name">Presale Contracts</div>
+      <p class="service-desc">Multi-stage token presale contracts with vesting, soft/hardcap, refund mechanism, ETH + USDT acceptance, and claim function.</p>
+      <div class="service-price">From $250</div>
+      <div class="service-time">⏱ 48hr delivery</div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio reveal" id="portfolio">
+  <div class="portfolio-header">
+    <div>
+      <p class="section-tag">// Live Demos</p>
+      <h2 class="section-title">Portfolio <span>samples</span></h2>
+    </div>
+    <a href="#" class="view-all">View all work →</a>
+  </div>
+  <div class="portfolio-grid">
+    <a href="demos/defi-landing.html" target="_blank" class="project-card">
+      <div class="project-preview">
+        <iframe src="demos/defi-landing.html" scrolling="no" tabindex="-1"></iframe>
+        <div class="project-preview-overlay"></div>
+        <div class="project-preview-label">LIVE DEMO</div>
+      </div>
+      <div class="project-info">
+        <div class="project-type">DeFi Protocol</div>
+        <div class="project-name">NexaVault — DeFi Landing</div>
+        <p class="project-desc">Yield protocol landing with live stats, features grid, and animated hero.</p>
+        <div class="project-tags">
+          <span class="tag">HTML/CSS/JS</span><span class="tag">Animated</span><span class="tag">Responsive</span>
+        </div>
+      </div>
+      <div class="project-link">Open Live Demo →</div>
+    </a>
+    <a href="demos/nft-project.html" target="_blank" class="project-card">
+      <div class="project-preview">
+        <iframe src="demos/nft-project.html" scrolling="no" tabindex="-1"></iframe>
+        <div class="project-preview-overlay"></div>
+        <div class="project-preview-label">LIVE DEMO</div>
+      </div>
+      <div class="project-info">
+        <div class="project-type">NFT Collection</div>
+        <div class="project-name">VOIDBORN — NFT Project</div>
+        <p class="project-desc">Full NFT site with generative art, mint widget, roadmap, and FAQ.</p>
+        <div class="project-tags">
+          <span class="tag">Generative Art</span><span class="tag">Mint UI</span><span class="tag">Canvas</span>
+        </div>
+      </div>
+      <div class="project-link">Open Live Demo →</div>
+    </a>
+    <a href="demos/token-presale.html" target="_blank" class="project-card">
+      <div class="project-preview">
+        <iframe src="demos/token-presale.html" scrolling="no" tabindex="-1"></iframe>
+        <div class="project-preview-overlay"></div>
+        <div class="project-preview-label">LIVE DEMO</div>
+      </div>
+      <div class="project-info">
+        <div class="project-type">Token Presale / IDO</div>
+        <div class="project-name">PULSAR — Token Presale</div>
+        <p class="project-desc">IDO page with live countdown, buy widget, tokenomics chart, and stages table.</p>
+        <div class="project-tags">
+          <span class="tag">Countdown</span><span class="tag">Calculator</span><span class="tag">Donut Chart</span>
+        </div>
+      </div>
+      <div class="project-link">Open Live Demo →</div>
+    </a>
+  </div>
+</section>
+
+<!-- SMART CONTRACTS -->
+<section class="contracts reveal" id="contracts">
+  <p class="section-tag">// Smart Contracts</p>
+  <h2 class="section-title">Production-ready <span>Solidity</span></h2>
+  <div class="contracts-grid">
+    <div class="contract-card">
+      <div class="contract-header">
+        <div class="contract-icon">🪙</div>
+        <span class="contract-chain">EVM / ETH / BSC</span>
+      </div>
+      <div class="contract-name">ERC-20 Token</div>
+      <p class="contract-desc">Full-featured token contract with max supply, anti-bot protection, and burn mechanism.</p>
+      <ul class="contract-features">
+        <li>Max supply cap (immutable)</li>
+        <li>Anti-bot max wallet limit</li>
+        <li>Blacklist for snipers</li>
+        <li>Mintable / burnable</li>
+        <li>Renounce ownership</li>
+      </ul>
+      <div class="contract-footer">
+        <span class="contract-price">From $100</span>
+        <a href="contracts/ERC20Token.sol" target="_blank" class="contract-view">View source →</a>
+      </div>
+    </div>
+    <div class="contract-card">
+      <div class="contract-header">
+        <div class="contract-icon">🎨</div>
+        <span class="contract-chain">Ethereum</span>
+      </div>
+      <div class="contract-name">NFT Mint (ERC-721A)</div>
+      <p class="contract-desc">Gas-optimised NFT contract with whitelist phase, reveal mechanic, and royalty support.</p>
+      <ul class="contract-features">
+        <li>ERC-721A (cheapest batch gas)</li>
+        <li>Merkle tree whitelist</li>
+        <li>Hidden → reveal mechanic</li>
+        <li>ERC-2981 royalties</li>
+        <li>ETH withdraw to owner</li>
+      </ul>
+      <div class="contract-footer">
+        <span class="contract-price">From $150</span>
+        <a href="contracts/NFTCollection.sol" target="_blank" class="contract-view">View source →</a>
+      </div>
+    </div>
+    <div class="contract-card">
+      <div class="contract-header">
+        <div class="contract-icon">🚀</div>
+        <span class="contract-chain">EVM / Multi-chain</span>
+      </div>
+      <div class="contract-name">Token Presale</div>
+      <p class="contract-desc">Multi-stage presale with soft/hardcap, vesting, ETH + USDT support, and full refund mechanism.</p>
+      <ul class="contract-features">
+        <li>Multi-stage pricing</li>
+        <li>Softcap + refund system</li>
+        <li>Cliff + linear vesting</li>
+        <li>ETH & USDT accepted</li>
+        <li>Emergency pause</li>
+      </ul>
+      <div class="contract-footer">
+        <span class="contract-price">From $250</span>
+        <a href="contracts/TokenPresale.sol" target="_blank" class="contract-view">View source →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process reveal">
+  <p class="section-tag">// How It Works</p>
+  <h2 class="section-title">Simple <span>process</span></h2>
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-circle">01</div>
+      <div class="step-title">You Brief Me</div>
+      <p class="step-desc">Share your project name, colors, content, and requirements via DM or Telegram.</p>
+    </div>
+    <div class="step">
+      <div class="step-circle">02</div>
+      <div class="step-title">I Build It</div>
+      <p class="step-desc">I deliver a custom page or contract within 24–48 hours, tailored exactly to your brief.</p>
+    </div>
+    <div class="step">
+      <div class="step-circle">03</div>
+      <div class="step-title">You Review</div>
+      <p class="step-desc">Check the work. Request up to 2 rounds of revisions at no extra cost.</p>
+    </div>
+    <div class="step">
+      <div class="step-circle">04</div>
+      <div class="step-title">Pay & Go Live</div>
+      <p class="step-desc">Pay in USDT/USDC. Receive all files. Your project goes live. Done.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing reveal" id="pricing">
+  <p class="section-tag">// Pricing</p>
+  <h2 class="section-title">Simple <span>pricing</span></h2>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Starter</div>
+      <div class="price-name">Page Only</div>
+      <div class="price-amount"><sup>$</sup>80</div>
+      <div class="price-note">+ gas fees if deployment needed</div>
+      <ul class="price-items">
+        <li class="inc">1 custom landing page</li>
+        <li class="inc">Responsive design</li>
+        <li class="inc">All sections included</li>
+        <li class="inc">2 revision rounds</li>
+        <li class="inc">Delivered in 24hr</li>
+        <li>Smart contract not included</li>
+        <li>No deployment</li>
+      </ul>
+      <button class="price-btn">Get Started →</button>
+    </div>
+    <div class="price-card featured">
+      <div class="price-tier">Popular</div>
+      <div class="price-name">Page + Contract</div>
+      <div class="price-amount"><sup>$</sup>280</div>
+      <div class="price-note">+ gas fees for deployment</div>
+      <ul class="price-items">
+        <li class="inc">Custom landing page</li>
+        <li class="inc">Smart contract (your choice)</li>
+        <li class="inc">Testnet deployment</li>
+        <li class="inc">Mainnet deployment</li>
+        <li class="inc">Etherscan verification</li>
+        <li class="inc">3 revision rounds</li>
+        <li class="inc">Delivered in 48hr</li>
+      </ul>
+      <button class="price-btn">Get Started →</button>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Full Launch</div>
+      <div class="price-name">Complete Package</div>
+      <div class="price-amount"><sup>$</sup>450</div>
+      <div class="price-note">+ gas fees for deployment</div>
+      <ul class="price-items">
+        <li class="inc">Page + contract (both)</li>
+        <li class="inc">Token OR NFT contract</li>
+        <li class="inc">Presale contract</li>
+        <li class="inc">Full deployment</li>
+        <li class="inc">Whitepaper (5 pages)</li>
+        <li class="inc">Unlimited revisions</li>
+        <li class="inc">Priority support (48hr)</li>
+      </ul>
+      <button class="price-btn">Get Started →</button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials reveal">
+  <p class="section-tag">// Social Proof</p>
+  <h2 class="section-title">What clients <span>say</span></h2>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Delivered our NFT landing page in 20 hours. Looked better than anything I'd seen at 3x the price. The mint button even worked out of the box."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">AK</div>
+        <div><div class="testi-name">Alex K.</div><div class="testi-role">Founder, CryptoBeasts NFT</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"The presale contract was clean, well-commented, and passed our audit first try. Saved us $2k+ compared to other devs we quoted."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">MO</div>
+        <div><div class="testi-name">Musa O.</div><div class="testi-role">CTO, DeltaFi Protocol</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Fast, professional, and knows Web3 inside out. Our token presale page raised $200k in the first week. The countdown and buy widget converted amazingly."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">JR</div>
+        <div><div class="testi-name">Jake R.</div><div class="testi-role">Founder, NovaPad IDO</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section reveal">
+  <h2>Ready to<br><span>launch?</span></h2>
+  <p>DM me with your project brief. I'll get back to you within 2 hours.</p>
+  <button class="btn-hot" style="font-size:0.85rem; padding:1.1rem 3rem">Start a Project →</button>
+  <div class="cta-contacts">
+    <a href="#" class="contact-chip">💬 Discord: noahbull72</a>
+    <a href="#" class="contact-chip">✈️ Telegram: @noahbull72</a>
+    <a href="#" class="contact-chip">🐦 Twitter: @noahbull72</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">noahbull72<span>.devstudio</span></div>
+  <span class="footer-copy">© 2025 Noahbull72.devstudio · Built in 24hrs · Paid in crypto</span>
+  <ul class="footer-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+</footer>
+
+<script>
+// Cursor
+const dot=document.getElementById('dot'), ring=document.getElementById('ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(a);})();
+document.querySelectorAll('button,a,.project-card,.service-card,.contract-card,.price-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='50px';ring.style.height='50px';ring.style.opacity='0.2';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='32px';ring.style.height='32px';ring.style.opacity='0.4';});
+});
+
+// Scroll reveal
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASTRA — Token Presale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600;700;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:     #020b14;
+  --deep:    #040f1c;
+  --panel:   #071626;
+  --panel2:  #0a1e30;
+  --cyan:    #00e5ff;
+  --cyan-dim:#00e5ff22;
+  --cyan-mid:#00e5ff55;
+  --green:   #00ff88;
+  --red:     #ff4060;
+  --white:   #e8f4ff;
+  --muted:   #3a6080;
+  --border:  rgba(0,229,255,0.12);
+  --border2: rgba(0,229,255,0.25);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* scanline effect */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.07) 2px,
+    rgba(0,0,0,0.07) 4px
+  );
+  pointer-events: none;
+  z-index: 8000;
+}
+
+/* ── Custom Cursor ── */
+.cur { position:fixed; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); }
+#cur1 { width:6px;height:6px;background:var(--cyan);border-radius:50%; }
+#cur2 { width:24px;height:24px;border:1px solid var(--cyan);opacity:0.6;transition:width .25s,height .25s,opacity .25s; }
+#cur3 { width:2px;height:20px;background:transparent;border-left:1px solid var(--cyan);opacity:0.3;transform:translate(-50%,-50%) rotate(45deg); }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:500;
+  display: flex; justify-content:space-between; align-items:center;
+  padding: 1.2rem 4rem;
+  background: rgba(2,11,20,0.9);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+}
+
+.nav-logo {
+  display: flex; align-items:center; gap:0.8rem;
+}
+.logo-hex {
+  width:32px; height:32px;
+  position:relative;
+}
+.logo-hex svg { width:100%;height:100%; }
+.logo-text {
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;
+  font-size:1.4rem;
+  letter-spacing:0.2em;
+  color:var(--white);
+}
+.logo-text span { color:var(--cyan); }
+
+.nav-status {
+  display:flex;align-items:center;gap:0.6rem;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.7rem;
+  color:var(--green);
+  border:1px solid rgba(0,255,136,0.2);
+  padding:0.4rem 1rem;
+}
+.status-dot {
+  width:6px;height:6px;background:var(--green);border-radius:50%;
+  animation:blink 1.2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+.nav-right { display:flex;align-items:center;gap:2rem; }
+.nav-links { display:flex;gap:2rem;list-style:none; }
+.nav-links a {
+  font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;
+  color:var(--muted);text-decoration:none;transition:color .2s;
+}
+.nav-links a:hover { color:var(--cyan); }
+
+.nav-btn {
+  font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:0.12em;
+  text-transform:uppercase;background:transparent;
+  color:var(--cyan);border:1px solid var(--border2);
+  padding:0.6rem 1.5rem;cursor:none;transition:background .25s,box-shadow .25s;
+}
+.nav-btn:hover { background:var(--cyan-dim);box-shadow:0 0 20px rgba(0,229,255,0.15); }
+
+/* ── TICKER BAR ── */
+.ticker-bar {
+  position:fixed;top:61px;left:0;right:0;z-index:499;
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
+  padding:0.45rem 0;
+  overflow:hidden;
+}
+.ticker-scroll {
+  display:inline-flex;gap:0;
+  animation:tickerAnim 30s linear infinite;
+  white-space:nowrap;
+}
+@keyframes tickerAnim { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.t-item {
+  display:inline-flex;align-items:center;gap:0.5rem;
+  padding:0 2.5rem;
+  font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.05em;
+  color:var(--muted);
+  border-right:1px solid var(--border);
+}
+.t-item .t-val { color:var(--white); }
+.t-item .t-up { color:var(--green); }
+.t-item .t-down { color:var(--red); }
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 420px;
+  gap:4rem;
+  align-items:center;
+  padding:10rem 4rem 5rem;
+  position:relative;
+  overflow:hidden;
+}
+
+/* bg grid */
+.hero::before {
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(var(--border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:50px 50px;
+  mask-image:radial-gradient(ellipse 70% 80% at 80% 50%,black 0%,transparent 100%);
+}
+
+#bgCanvas { position:absolute;inset:0;z-index:0;pointer-events:none; }
+
+.hero-left { position:relative;z-index:1; }
+
+.hero-badge {
+  display:inline-flex;align-items:center;gap:0.7rem;
+  font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;
+  color:var(--cyan);background:var(--cyan-dim);
+  border:1px solid var(--border2);padding:0.4rem 1rem;
+  margin-bottom:2rem;
+  opacity:0;animation:fadeUp .8s .2s forwards;
+}
+
+.hero h1 {
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;
+  font-size:clamp(4rem,9vw,9rem);
+  line-height:0.9;
+  letter-spacing:-0.01em;
+  text-transform:uppercase;
+  opacity:0;animation:fadeUp .9s .4s forwards;
+}
+.hero h1 .cyan { color:var(--cyan); }
+.hero h1 .outline {
+  -webkit-text-stroke:1.5px rgba(0,229,255,0.4);
+  color:transparent;
+}
+
+.hero-sub {
+  margin-top:2rem;max-width:500px;
+  font-size:1rem;font-weight:300;line-height:1.8;color:var(--muted);
+  opacity:0;animation:fadeUp .9s .6s forwards;
+}
+
+.hero-metrics {
+  display:flex;gap:3rem;margin-top:3rem;
+  opacity:0;animation:fadeUp .9s .8s forwards;
+}
+.hero-metric-val {
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:2rem;letter-spacing:0.02em;color:var(--white);
+}
+.hero-metric-label {
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);
+  margin-top:0.2rem;
+}
+
+.hero-ctas {
+  display:flex;gap:1rem;align-items:center;margin-top:2.5rem;
+  opacity:0;animation:fadeUp .9s 1s forwards;
+}
+
+.btn-primary {
+  font-family:'Share Tech Mono',monospace;font-size:0.78rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  background:var(--cyan);color:var(--ink);border:none;
+  padding:1rem 2.5rem;cursor:none;font-weight:600;
+  transition:box-shadow .3s,transform .2s;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);
+}
+.btn-primary:hover { box-shadow:0 0 40px rgba(0,229,255,0.35);transform:translateY(-1px); }
+
+.btn-ghost {
+  font-family:'Share Tech Mono',monospace;font-size:0.78rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  background:transparent;color:var(--white);
+  border:1px solid var(--border2);padding:1rem 2.5rem;cursor:none;
+  transition:border-color .3s,color .3s;
+}
+.btn-ghost:hover { border-color:var(--cyan);color:var(--cyan); }
+
+/* ── PRESALE WIDGET ── */
+.presale-widget {
+  position:relative;z-index:1;
+  background:var(--panel);
+  border:1px solid var(--border2);
+  padding:2rem;
+  opacity:0;animation:fadeUp .9s .5s forwards;
+}
+.presale-widget::before {
+  content:'';position:absolute;
+  top:-1px;left:10%;right:10%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+}
+
+.widget-header {
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:1.5rem;
+  padding-bottom:1.2rem;
+  border-bottom:1px solid var(--border);
+}
+.widget-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:1rem;letter-spacing:0.1em;text-transform:uppercase;
+}
+.widget-phase {
+  font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;
+  color:var(--cyan);border:1px solid var(--border2);padding:0.25rem 0.7rem;
+  background:var(--cyan-dim);
+}
+
+/* Countdown */
+.countdown {
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;
+  margin-bottom:1.5rem;
+}
+.cd-block {
+  background:var(--deep);border:1px solid var(--border);
+  text-align:center;padding:0.8rem 0.5rem;
+}
+.cd-num {
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.8rem;
+  color:var(--cyan);line-height:1;
+}
+.cd-label {
+  font-family:'Share Tech Mono',monospace;font-size:0.5rem;
+  letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);
+  margin-top:0.2rem;
+}
+
+/* Raise progress */
+.raise-label {
+  display:flex;justify-content:space-between;
+  font-family:'Share Tech Mono',monospace;font-size:0.62rem;
+  letter-spacing:0.08em;color:var(--muted);margin-bottom:0.4rem;
+}
+.raise-label span:last-child { color:var(--cyan); }
+.raise-track {
+  height:4px;background:rgba(0,229,255,0.08);
+  margin-bottom:1.5rem;position:relative;overflow:hidden;
+}
+.raise-fill {
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--cyan),var(--green));
+  transition:width 1.8s cubic-bezier(0.16,1,0.3,1);
+  position:relative;
+}
+.raise-fill::after {
+  content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);
+  width:8px;height:8px;background:var(--cyan);border-radius:50%;
+  box-shadow:0 0 10px var(--cyan);
+}
+
+/* Token swap box */
+.swap-box { background:var(--deep);border:1px solid var(--border);padding:1.2rem;margin-bottom:0.8rem; }
+.swap-label {
+  font-family:'Share Tech Mono',monospace;font-size:0.58rem;
+  letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);
+  margin-bottom:0.6rem;
+}
+.swap-row { display:flex;align-items:center;gap:0.8rem; }
+.swap-input {
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.6rem;
+  color:var(--white);letter-spacing:0.02em;
+}
+.swap-input::placeholder { color:var(--muted); }
+.swap-token {
+  display:flex;align-items:center;gap:0.5rem;
+  font-family:'Share Tech Mono',monospace;font-size:0.72rem;
+  color:var(--cyan);background:var(--cyan-dim);
+  border:1px solid var(--border2);padding:0.4rem 0.8rem;flex-shrink:0;
+}
+.token-circle {
+  width:18px;height:18px;background:var(--cyan);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.5rem;font-weight:700;color:var(--ink);
+}
+
+.swap-arrow {
+  text-align:center;padding:0.5rem 0;
+  font-size:0.8rem;color:var(--muted);
+}
+
+.swap-rate {
+  font-family:'Share Tech Mono',monospace;font-size:0.6rem;
+  color:var(--muted);text-align:right;margin-bottom:1.2rem;
+  letter-spacing:0.05em;
+}
+.swap-rate span { color:var(--cyan); }
+
+.buy-btn {
+  width:100%;background:var(--cyan);color:var(--ink);
+  font-family:'Share Tech Mono',monospace;font-size:0.78rem;
+  letter-spacing:0.15em;text-transform:uppercase;font-weight:600;
+  border:none;padding:1.1rem;cursor:none;
+  transition:box-shadow .3s;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);
+}
+.buy-btn:hover { box-shadow:0 0 30px rgba(0,229,255,0.3); }
+
+.widget-footer {
+  display:flex;justify-content:space-between;
+  font-family:'Share Tech Mono',monospace;font-size:0.58rem;
+  color:var(--muted);margin-top:1rem;letter-spacing:0.05em;
+}
+
+/* ── SECTION BASE ── */
+section { position:relative;z-index:1; }
+.section-tag {
+  font-family:'Share Tech Mono',monospace;font-size:0.62rem;
+  letter-spacing:0.2em;text-transform:uppercase;color:var(--cyan);
+  display:inline-flex;align-items:center;gap:0.6rem;margin-bottom:1rem;
+}
+.section-tag::before { content:'//'; color:var(--muted); }
+
+.section-h {
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:clamp(2.2rem,4vw,3.8rem);letter-spacing:-0.01em;text-transform:uppercase;
+  line-height:1;
+}
+.section-h .cyan { color:var(--cyan); }
+
+/* ── TOKEN INFO ── */
+.token-info {
+  padding:6rem 4rem;
+  background:var(--deep);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+
+.token-grid {
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:5rem;align-items:center;margin-top:4rem;
+}
+
+/* Tokenomics donut */
+.donut-wrap { position:relative;text-align:center; }
+#donutCanvas { display:block;margin:0 auto; }
+.donut-legend {
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0.6rem;margin-top:2rem;
+}
+.legend-item {
+  display:flex;align-items:center;gap:0.7rem;
+  font-family:'Share Tech Mono',monospace;font-size:0.6rem;
+  letter-spacing:0.08em;color:var(--muted);
+}
+.legend-dot { width:8px;height:8px;border-radius:2px;flex-shrink:0; }
+
+/* Token stats */
+.token-stats { display:flex;flex-direction:column;gap:1.2rem; }
+.token-stat-row {
+  display:grid;grid-template-columns:1fr 1fr;
+  border:1px solid var(--border);
+  background:var(--panel);
+}
+.token-stat-cell {
+  padding:1.2rem 1.5rem;
+}
+.token-stat-cell:first-child { border-right:1px solid var(--border); }
+.token-stat-key {
+  font-family:'Share Tech Mono',monospace;font-size:0.58rem;
+  letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;
+}
+.token-stat-val {
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:1.1rem;letter-spacing:0.05em;color:var(--white);
+}
+.token-stat-val.cyan { color:var(--cyan); }
+
+/* ── HOW TO BUY ── */
+.how-buy { padding:6rem 4rem; }
+
+.steps-wrap { display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:4rem; }
+.step {
+  background:var(--ink);padding:2.5rem;
+  transition:background .3s;position:relative;overflow:hidden;
+}
+.step::after {
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--cyan),transparent);
+  transform:scaleX(0);transform-origin:left;transition:transform .4s;
+}
+.step:hover { background:var(--panel); }
+.step:hover::after { transform:scaleX(1); }
+
+.step-num {
+  font-family:'Share Tech Mono',monospace;font-size:0.65rem;
+  letter-spacing:0.2em;color:var(--cyan);margin-bottom:1.5rem;
+}
+.step-icon { font-size:2rem;margin-bottom:1.2rem;display:block; }
+.step-title {
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:1.1rem;text-transform:uppercase;letter-spacing:0.05em;
+  margin-bottom:0.8rem;
+}
+.step-desc { font-size:0.8rem;font-weight:300;line-height:1.9;color:var(--muted); }
+
+/* ── ALLOCATION ── */
+.allocation { padding:6rem 4rem;background:var(--deep);border-top:1px solid var(--border); }
+
+.alloc-table { margin-top:4rem;width:100%;border-collapse:collapse; }
+.alloc-table thead th {
+  font-family:'Share Tech Mono',monospace;font-size:0.6rem;
+  letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--border);padding:0 1.5rem 1rem;text-align:left;
+}
+.alloc-table tbody tr { border-bottom:1px solid rgba(0,229,255,0.05); }
+.alloc-table tbody tr:hover { background:var(--panel); }
+.alloc-table td {
+  padding:1.2rem 1.5rem;font-size:0.82rem;font-weight:300;
+}
+.alloc-table td:first-child { color:var(--white);font-weight:500; }
+.alloc-table td:nth-child(2) {
+  font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--cyan);
+}
+.alloc-bar-cell { width:40%; }
+.alloc-bar-track { height:2px;background:rgba(0,229,255,0.08); }
+.alloc-bar-fill { height:100%;background:linear-gradient(90deg,var(--cyan),var(--green)); }
+td.lock {
+  font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);
+}
+
+/* ── ROADMAP ── */
+.roadmap { padding:6rem 4rem; }
+.timeline {
+  position:relative;margin-top:5rem;
+  padding-left:2rem;
+}
+.timeline::before {
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:1px;background:linear-gradient(to bottom,var(--cyan),transparent);
+}
+.tl-item { position:relative;padding:0 0 4rem 3rem; }
+.tl-item::before {
+  content:'';position:absolute;left:-5px;top:6px;
+  width:10px;height:10px;border-radius:50%;
+  background:var(--panel);border:1px solid var(--cyan);
+}
+.tl-item.done::before { background:var(--cyan); }
+.tl-item.active::before {
+  background:var(--cyan);
+  box-shadow:0 0 12px var(--cyan);
+  animation:tl-pulse 2s infinite;
+}
+@keyframes tl-pulse { 0%,100%{box-shadow:0 0 12px var(--cyan)} 50%{box-shadow:0 0 24px var(--cyan),0 0 40px rgba(0,229,255,0.3)} }
+
+.tl-date {
+  font-family:'Share Tech Mono',monospace;font-size:0.62rem;
+  letter-spacing:0.15em;color:var(--cyan);margin-bottom:0.5rem;
+}
+.tl-title {
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:1.2rem;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.8rem;
+}
+.tl-items { list-style:none;display:flex;flex-direction:column;gap:0.4rem; }
+.tl-items li {
+  font-size:0.78rem;font-weight:300;color:var(--muted);
+  line-height:1.6;display:flex;align-items:flex-start;gap:0.8rem;
+}
+.tl-items li::before { content:'→';color:var(--cyan);flex-shrink:0;margin-top:1px; }
+.tl-items li.done-item { color:var(--green);text-decoration:line-through;text-decoration-color:rgba(0,255,136,0.3); }
+
+.tl-grid { display:grid;grid-template-columns:1fr 1fr;gap:5rem; }
+
+/* ── PARTNERS ── */
+.partners { padding:5rem 4rem;background:var(--deep);border-top:1px solid var(--border); }
+.partner-logos {
+  display:flex;justify-content:center;align-items:center;
+  flex-wrap:wrap;gap:3rem;margin-top:3rem;
+}
+.partner-logo {
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--border);padding:0.7rem 1.8rem;
+  transition:color .3s,border-color .3s,box-shadow .3s;cursor:default;
+}
+.partner-logo:hover { color:var(--cyan);border-color:var(--border2);box-shadow:0 0 20px rgba(0,229,255,0.08); }
+
+/* ── AUDIT + SECURITY ── */
+.security { padding:6rem 4rem; }
+.security-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:4rem; }
+.sec-card {
+  background:var(--panel);border:1px solid var(--border);
+  padding:2rem;transition:border-color .3s;
+}
+.sec-card:hover { border-color:var(--border2); }
+.sec-icon { font-size:1.8rem;margin-bottom:1.2rem;display:block; }
+.sec-title {
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:1rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.8rem;
+}
+.sec-desc { font-size:0.78rem;font-weight:300;line-height:1.9;color:var(--muted); }
+.sec-badge {
+  display:inline-block;margin-top:1rem;
+  font-family:'Share Tech Mono',monospace;font-size:0.58rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--green);border:1px solid rgba(0,255,136,0.25);
+  padding:0.2rem 0.6rem;background:rgba(0,255,136,0.05);
+}
+
+/* ── FAQ ── */
+.faq { padding:6rem 4rem;background:var(--deep); }
+.faq-inner { max-width:800px;margin:4rem auto 0; }
+.faq-item { border-bottom:1px solid var(--border); }
+.faq-q {
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.5rem 0;cursor:none;
+  font-size:0.92rem;font-weight:500;transition:color .3s;
+}
+.faq-q:hover { color:var(--cyan); }
+.faq-plus {
+  font-family:'Share Tech Mono',monospace;font-size:1.1rem;
+  color:var(--cyan);transition:transform .3s;flex-shrink:0;margin-left:1rem;
+}
+.faq-a {
+  font-size:0.8rem;font-weight:300;line-height:2;color:var(--muted);
+  max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;
+}
+.faq-item.open .faq-a { max-height:200px;padding-bottom:1.5rem; }
+.faq-item.open .faq-plus { transform:rotate(45deg); }
+
+/* ── CTA BAND ── */
+.cta-band {
+  padding:8rem 4rem;text-align:center;
+  background:var(--panel);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.cta-band::before {
+  content:'';position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:700px;height:700px;
+  background:radial-gradient(circle,rgba(0,229,255,0.06) 0%,transparent 60%);
+  pointer-events:none;
+}
+.cta-band h2 {
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:clamp(3rem,7vw,7rem);text-transform:uppercase;
+  line-height:0.9;letter-spacing:-0.02em;
+  margin-bottom:2rem;
+}
+.cta-band h2 .cyan { color:var(--cyan); }
+.cta-band p { font-size:0.9rem;font-weight:300;color:var(--muted);margin-bottom:3rem; }
+
+/* ── FOOTER ── */
+footer {
+  padding:4rem 4rem 2.5rem;
+  border-top:1px solid var(--border);
+}
+.footer-top {
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:4rem;margin-bottom:4rem;
+}
+.footer-brand-name {
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:1.5rem;letter-spacing:0.15em;color:var(--white);
+  margin-bottom:0.8rem;
+}
+.footer-brand-name span { color:var(--cyan); }
+.footer-brand p {
+  font-size:0.78rem;font-weight:300;color:var(--muted);
+  line-height:1.9;max-width:260px;margin-bottom:1.5rem;
+}
+.footer-socials { display:flex;gap:0.8rem; }
+.social-btn {
+  font-family:'Share Tech Mono',monospace;font-size:0.6rem;
+  letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--border);
+  padding:0.4rem 0.9rem;text-decoration:none;
+  transition:color .2s,border-color .2s;
+}
+.social-btn:hover { color:var(--cyan);border-color:var(--border2); }
+
+.footer-col h4 {
+  font-family:'Share Tech Mono',monospace;font-size:0.58rem;
+  letter-spacing:0.2em;text-transform:uppercase;color:var(--cyan);
+  margin-bottom:1.5rem;
+}
+.footer-col ul { list-style:none;display:flex;flex-direction:column;gap:0.8rem; }
+.footer-col a {
+  font-size:0.78rem;font-weight:300;color:var(--muted);
+  text-decoration:none;transition:color .2s;
+}
+.footer-col a:hover { color:var(--white); }
+
+.footer-bottom {
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:2rem;border-top:1px solid rgba(0,229,255,0.06);
+  font-family:'Share Tech Mono',monospace;font-size:0.6rem;
+  letter-spacing:0.08em;color:var(--muted);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0;transform:translateY(30px); }
+  to { opacity:1;transform:translateY(0); }
+}
+.reveal { opacity:0;transform:translateY(25px);transition:opacity .9s ease,transform .9s ease; }
+.reveal.visible { opacity:1;transform:translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  nav{padding:1.2rem 2rem;}
+  .nav-links,.nav-status{display:none;}
+  .hero{grid-template-columns:1fr;padding:9rem 2rem 5rem;gap:3rem;}
+  .hero-right{order:-1;}
+  .token-grid,.tl-grid{grid-template-columns:1fr;}
+  .steps-wrap{grid-template-columns:1fr 1fr;}
+  .security-grid{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .how-buy,.token-info,.allocation,.roadmap,.partners,.security,.faq,.cta-band,footer{padding:5rem 2rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- Cursors -->
+<div class="cur" id="cur1"></div>
+<div class="cur" id="cur2"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-hex">
+      <svg viewBox="0 0 32 32" fill="none">
+        <polygon points="16,2 28,9 28,23 16,30 4,23 4,9" stroke="#00e5ff" stroke-width="1" fill="rgba(0,229,255,0.08)"/>
+        <polygon points="16,8 22,12 22,20 16,24 10,20 10,12" fill="rgba(0,229,255,0.15)" stroke="#00e5ff" stroke-width="0.5"/>
+      </svg>
+    </div>
+    <span class="logo-text">ASTR<span>A</span></span>
+  </div>
+  <div class="nav-status"><span class="status-dot"></span>Presale Live</div>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#">Token</a></li>
+      <li><a href="#">Roadmap</a></li>
+      <li><a href="#">Docs</a></li>
+      <li><a href="#">Audit</a></li>
+    </ul>
+    <button class="nav-btn">Connect Wallet</button>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-scroll">
+    <span class="t-item">ETH <span class="t-val">$3,842</span> <span class="t-up">▲2.4%</span></span>
+    <span class="t-item">BTC <span class="t-val">$67,120</span> <span class="t-up">▲1.8%</span></span>
+    <span class="t-item">SOL <span class="t-val">$188</span> <span class="t-up">▲4.1%</span></span>
+    <span class="t-item">ASTRA Price <span class="t-val">$0.042</span></span>
+    <span class="t-item">Listing Price <span class="t-val">$0.18</span></span>
+    <span class="t-item">Presale Ends <span class="t-val">14D 06H 32M</span></span>
+    <span class="t-item">Raised <span class="t-val">$4.2M</span> / $6M</span>
+    <span class="t-item">Participants <span class="t-val">12,841</span></span>
+    <span class="t-item">ETH <span class="t-val">$3,842</span> <span class="t-up">▲2.4%</span></span>
+    <span class="t-item">BTC <span class="t-val">$67,120</span> <span class="t-up">▲1.8%</span></span>
+    <span class="t-item">SOL <span class="t-val">$188</span> <span class="t-up">▲4.1%</span></span>
+    <span class="t-item">ASTRA Price <span class="t-val">$0.042</span></span>
+    <span class="t-item">Listing Price <span class="t-val">$0.18</span></span>
+    <span class="t-item">Presale Ends <span class="t-val">14D 06H 32M</span></span>
+    <span class="t-item">Raised <span class="t-val">$4.2M</span> / $6M</span>
+    <span class="t-item">Participants <span class="t-val">12,841</span></span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="bgCanvas"></canvas>
+
+  <div class="hero-left">
+    <div class="hero-badge">🛰 Phase 2 Presale — Limited Allocation</div>
+    <h1>
+      FUND THE<br>
+      <span class="cyan">FUTURE</span><br>
+      <span class="outline">EARLY</span>
+    </h1>
+    <p class="hero-sub">
+      ASTRA is the cross-chain liquidity infrastructure powering the next generation of decentralised finance. Get in at ground floor pricing before the $ASTRA token lists on Binance &amp; Coinbase.
+    </p>
+    <div class="hero-metrics">
+      <div>
+        <div class="hero-metric-val">$0.042</div>
+        <div class="hero-metric-label">Presale Price</div>
+      </div>
+      <div>
+        <div class="hero-metric-val">4.3×</div>
+        <div class="hero-metric-label">To Listing Price</div>
+      </div>
+      <div>
+        <div class="hero-metric-val">$6M</div>
+        <div class="hero-metric-label">Hard Cap</div>
+      </div>
+    </div>
+    <div class="hero-ctas">
+      <button class="btn-primary">Buy $ASTRA Now</button>
+      <button class="btn-ghost">Read Whitepaper</button>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="presale-widget">
+      <div class="widget-header">
+        <span class="widget-title">Presale Round 2</span>
+        <span class="widget-phase">Active</span>
+      </div>
+
+      <!-- Countdown -->
+      <div class="countdown">
+        <div class="cd-block"><div class="cd-num" id="cd-d">14</div><div class="cd-label">Days</div></div>
+        <div class="cd-block"><div class="cd-num" id="cd-h">06</div><div class="cd-label">Hours</div></div>
+        <div class="cd-block"><div class="cd-num" id="cd-m">32</div><div class="cd-label">Mins</div></div>
+        <div class="cd-block"><div class="cd-num" id="cd-s">44</div><div class="cd-label">Secs</div></div>
+      </div>
+
+      <!-- Raise progress -->
+      <div class="raise-label"><span>Amount Raised</span><span id="raiseVal">$4,200,000 / $6,000,000</span></div>
+      <div class="raise-track"><div class="raise-fill" id="raiseFill"></div></div>
+
+      <!-- Swap -->
+      <div class="swap-box">
+        <div class="swap-label">You Pay</div>
+        <div class="swap-row">
+          <input class="swap-input" type="number" placeholder="0.00" id="payInput" oninput="calcTokens()">
+          <div class="swap-token"><div class="token-circle">E</div>ETH</div>
+        </div>
+      </div>
+      <div class="swap-arrow">↕</div>
+      <div class="swap-box">
+        <div class="swap-label">You Receive</div>
+        <div class="swap-row">
+          <input class="swap-input" type="number" placeholder="0.00" id="receiveInput" readonly>
+          <div class="swap-token"><div class="token-circle" style="background:linear-gradient(135deg,#00e5ff,#00ff88)">A</div>ASTRA</div>
+        </div>
+      </div>
+      <div class="swap-rate">1 ETH = <span>91,476 ASTRA</span> · Price: <span>$0.042</span></div>
+
+      <button class="buy-btn">Connect Wallet to Buy</button>
+
+      <div class="widget-footer">
+        <span>Min: 0.01 ETH</span>
+        <span>Max: 10 ETH</span>
+        <span>Vesting: 6mo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOKEN INFO -->
+<section class="token-info reveal">
+  <span class="section-tag">Tokenomics</span>
+  <h2 class="section-h">By the <span class="cyan">Numbers</span></h2>
+  <div class="token-grid">
+    <div class="donut-wrap">
+      <canvas id="donutCanvas" width="300" height="300"></canvas>
+      <div class="donut-legend" id="donutLegend"></div>
+    </div>
+    <div class="token-stats">
+      <div class="token-stat-row">
+        <div class="token-stat-cell"><div class="token-stat-key">Token Name</div><div class="token-stat-val">ASTRA</div></div>
+        <div class="token-stat-cell"><div class="token-stat-key">Network</div><div class="token-stat-val">Ethereum (ERC-20)</div></div>
+      </div>
+      <div class="token-stat-row">
+        <div class="token-stat-cell"><div class="token-stat-key">Total Supply</div><div class="token-stat-val cyan">1,000,000,000</div></div>
+        <div class="token-stat-cell"><div class="token-stat-key">Presale Supply</div><div class="token-stat-val">200,000,000 (20%)</div></div>
+      </div>
+      <div class="token-stat-row">
+        <div class="token-stat-cell"><div class="token-stat-key">Presale Price</div><div class="token-stat-val cyan">$0.042</div></div>
+        <div class="token-stat-cell"><div class="token-stat-key">Listing Price</div><div class="token-stat-val">$0.18</div></div>
+      </div>
+      <div class="token-stat-row">
+        <div class="token-stat-cell"><div class="token-stat-key">Soft Cap</div><div class="token-stat-val">$2,000,000</div></div>
+        <div class="token-stat-cell"><div class="token-stat-key">Hard Cap</div><div class="token-stat-val">$6,000,000</div></div>
+      </div>
+      <div class="token-stat-row">
+        <div class="token-stat-cell"><div class="token-stat-key">Exchange Listing</div><div class="token-stat-val cyan">Binance + Coinbase</div></div>
+        <div class="token-stat-cell"><div class="token-stat-key">Listing Date</div><div class="token-stat-val">Q2 2025</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO BUY -->
+<section class="how-buy reveal">
+  <span class="section-tag">Process</span>
+  <h2 class="section-h">How to <span class="cyan">Buy</span></h2>
+  <div class="steps-wrap">
+    <div class="step">
+      <div class="step-num">STEP_01</div>
+      <span class="step-icon">🦊</span>
+      <div class="step-title">Connect Wallet</div>
+      <p class="step-desc">Use MetaMask, Trust Wallet, or WalletConnect. Make sure you're on Ethereum mainnet with some ETH for gas.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">STEP_02</div>
+      <span class="step-icon">💱</span>
+      <div class="step-title">Enter Amount</div>
+      <p class="step-desc">Enter the amount of ETH you want to spend. Minimum 0.01 ETH, maximum 10 ETH per wallet address.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">STEP_03</div>
+      <span class="step-icon">✍️</span>
+      <div class="step-title">Confirm Transaction</div>
+      <p class="step-desc">Approve the transaction in your wallet. Your $ASTRA tokens are immediately allocated to your address.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">STEP_04</div>
+      <span class="step-icon">🚀</span>
+      <div class="step-title">Claim on Listing</div>
+      <p class="step-desc">Tokens unlock at exchange listing. Claim directly from this site and watch your investment grow.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="allocation reveal">
+  <span class="section-tag">Distribution</span>
+  <h2 class="section-h">Token <span class="cyan">Allocation</span></h2>
+  <table class="alloc-table">
+    <thead>
+      <tr>
+        <th>Category</th><th>Allocation</th><th>Tokens</th><th class="alloc-bar-cell">Distribution</th><th>Lock Period</th>
+      </tr>
+    </thead>
+    <tbody id="allocBody"></tbody>
+  </table>
+</section>
+
+<!-- ROADMAP -->
+<section class="roadmap reveal">
+  <span class="section-tag">Roadmap</span>
+  <h2 class="section-h">The <span class="cyan">Mission</span></h2>
+  <div class="tl-grid">
+    <div class="timeline" id="timeline1"></div>
+    <div class="timeline" id="timeline2"></div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="partners reveal">
+  <span class="section-tag">Backers & Partners</span>
+  <h2 class="section-h" style="text-align:center">Backed by the <span class="cyan">Best</span></h2>
+  <div class="partner-logos">
+    <div class="partner-logo">Coinbase Ventures</div>
+    <div class="partner-logo">Binance Labs</div>
+    <div class="partner-logo">a16z Crypto</div>
+    <div class="partner-logo">Paradigm</div>
+    <div class="partner-logo">Multicoin Capital</div>
+    <div class="partner-logo">Polychain</div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section class="security reveal">
+  <span class="section-tag">Trust & Safety</span>
+  <h2 class="section-h">Built to <span class="cyan">Last</span></h2>
+  <div class="security-grid">
+    <div class="sec-card">
+      <span class="sec-icon">🔒</span>
+      <div class="sec-title">Smart Contract Audit</div>
+      <p class="sec-desc">Fully audited by Certik and Hacken. Zero critical vulnerabilities. All findings resolved and verified on-chain.</p>
+      <span class="sec-badge">✓ Audit Complete</span>
+    </div>
+    <div class="sec-card">
+      <span class="sec-icon">🔐</span>
+      <div class="sec-title">Liquidity Lock</div>
+      <p class="sec-desc">100% of presale liquidity locked for 2 years via Unicrypt. Provably verifiable on-chain at any time.</p>
+      <span class="sec-badge">✓ Locked 2 Years</span>
+    </div>
+    <div class="sec-card">
+      <span class="sec-icon">👁</span>
+      <div class="sec-title">KYC Verified</div>
+      <p class="sec-desc">Full team KYC completed through Assure DeFi. All founders publicly identified — no anonymous wallets.</p>
+      <span class="sec-badge">✓ KYC Verified</span>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq reveal">
+  <span class="section-tag">FAQ</span>
+  <h2 class="section-h" style="text-align:center">Your <span class="cyan">Questions</span></h2>
+  <div class="faq-inner" id="faqInner"></div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band reveal">
+  <h2>Don't miss<br>the <span class="cyan">window</span></h2>
+  <p>Presale Phase 2 closes in 14 days. Price increases 40% in Phase 3.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;">
+    <button class="btn-primary" style="font-size:0.85rem;padding:1.2rem 3rem;">Buy $ASTRA Now</button>
+    <button class="btn-ghost" style="font-size:0.85rem;padding:1.2rem 3rem;">View Whitepaper</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-brand-name">ASTR<span>A</span></div>
+      <p>Cross-chain liquidity infrastructure for the next generation of decentralised finance.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-btn">Twitter</a>
+        <a href="#" class="social-btn">Telegram</a>
+        <a href="#" class="social-btn">Discord</a>
+        <a href="#" class="social-btn">GitHub</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#">Whitepaper</a></li>
+        <li><a href="#">Litepaper</a></li>
+        <li><a href="#">Tokenomics</a></li>
+        <li><a href="#">Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Team</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Press Kit</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Audit Report</a></li>
+        <li><a href="#">Smart Contract</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 ASTRA Protocol. All rights reserved.</span>
+    <span>Contract: 0x7a2C...4f8E</span>
+    <span>Not available in the US, China, or sanctioned jurisdictions.</span>
+  </div>
+</footer>
+
+<script>
+// ── Cursor ──
+const c1 = document.getElementById('cur1');
+const c2 = document.getElementById('cur2');
+let mx=0,my=0,t2x=0,t2y=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  c1.style.left=mx+'px';c1.style.top=my+'px';
+});
+(function trail(){
+  t2x+=(mx-t2x)*0.12;t2y+=(my-t2y)*0.12;
+  c2.style.left=t2x+'px';c2.style.top=t2y+'px';
+  requestAnimationFrame(trail);
+})();
+document.querySelectorAll('button,a,.step,.sec-card,.partner-logo').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{c2.style.width='44px';c2.style.height='44px';c2.style.opacity='0.3';});
+  el.addEventListener('mouseleave',()=>{c2.style.width='24px';c2.style.height='24px';c2.style.opacity='0.6';});
+});
+
+// ── BG Canvas – constellation ──
+const bgC = document.getElementById('bgCanvas');
+const bgX = bgC.getContext('2d');
+function resizeBg(){bgC.width=bgC.offsetWidth;bgC.height=bgC.offsetHeight;}
+resizeBg();window.addEventListener('resize',resizeBg);
+const pts=Array.from({length:80},()=>({
+  x:Math.random(),y:Math.random(),
+  vx:(Math.random()-.5)*.0002,vy:(Math.random()-.5)*.0002,
+  r:Math.random()*1.2+.3
+}));
+function drawBg(){
+  const w=bgC.width,h=bgC.height;
+  bgX.clearRect(0,0,w,h);
+  pts.forEach((p,i)=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=1;if(p.x>1)p.x=0;
+    if(p.y<0)p.y=1;if(p.y>1)p.y=0;
+    pts.slice(i+1).forEach(q=>{
+      const dx=(p.x-q.x)*w,dy=(p.y-q.y)*h;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<100){
+        bgX.strokeStyle=`rgba(0,229,255,${0.08*(1-d/100)})`;
+        bgX.lineWidth=.5;bgX.beginPath();
+        bgX.moveTo(p.x*w,p.y*h);bgX.lineTo(q.x*w,q.y*h);bgX.stroke();
+      }
+    });
+    bgX.fillStyle=`rgba(0,229,255,${p.r*0.3})`;
+    bgX.beginPath();bgX.arc(p.x*w,p.y*h,p.r,0,Math.PI*2);bgX.fill();
+  });
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+// ── Countdown ──
+const endTime = Date.now() + (14*86400+6*3600+32*60+44)*1000;
+function tick(){
+  const rem=Math.max(0,endTime-Date.now());
+  const d=Math.floor(rem/86400000);
+  const h=Math.floor((rem%86400000)/3600000);
+  const m=Math.floor((rem%3600000)/60000);
+  const s=Math.floor((rem%60000)/1000);
+  document.getElementById('cd-d').textContent=String(d).padStart(2,'0');
+  document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
+}
+tick();setInterval(tick,1000);
+
+// ── Raise fill ──
+setTimeout(()=>document.getElementById('raiseFill').style.width='70%',700);
+
+// ── Swap calc ──
+function calcTokens(){
+  const eth=parseFloat(document.getElementById('payInput').value)||0;
+  const rate=91476;
+  document.getElementById('receiveInput').value=eth?Math.floor(eth*rate).toLocaleString():'';
+}
+
+// ── Donut chart ──
+const donutData=[
+  {label:'Presale',pct:20,color:'#00e5ff'},
+  {label:'Ecosystem',pct:30,color:'#00ff88'},
+  {label:'Team',pct:15,color:'#0090b0'},
+  {label:'Treasury',pct:20,color:'#004d60'},
+  {label:'Marketing',pct:10,color:'#00bcd4'},
+  {label:'Advisors',pct:5,color:'#006070'},
+];
+const dc=document.getElementById('donutCanvas');
+const dx=dc.getContext('2d');
+let startAngle=-Math.PI/2;
+donutData.forEach(d=>{
+  const angle=(d.pct/100)*Math.PI*2;
+  dx.beginPath();dx.moveTo(150,150);
+  dx.arc(150,150,120,startAngle,startAngle+angle);
+  dx.closePath();dx.fillStyle=d.color;dx.fill();
+  startAngle+=angle;
+});
+// inner hole
+dx.beginPath();dx.arc(150,150,75,0,Math.PI*2);
+dx.fillStyle='#040f1c';dx.fill();
+// center text
+dx.fillStyle='#00e5ff';dx.font='bold 28px Barlow Condensed';dx.textAlign='center';dx.textBaseline='middle';
+dx.fillText('1B',150,142);
+dx.fillStyle='#3a6080';dx.font='11px Share Tech Mono';
+dx.fillText('TOTAL SUPPLY',150,165);
+// Legend
+const legend=document.getElementById('donutLegend');
+donutData.forEach(d=>{
+  const item=document.createElement('div');
+  item.className='legend-item';
+  item.innerHTML=`<span class="legend-dot" style="background:${d.color}"></span>${d.pct}% ${d.label}`;
+  legend.appendChild(item);
+});
+
+// ── Allocation table ──
+const allocData=[
+  {cat:'Presale',pct:20,tokens:'200,000,000',lock:'6 months vesting'},
+  {cat:'Ecosystem Fund',pct:30,tokens:'300,000,000',lock:'36 months linear'},
+  {cat:'Team & Founders',pct:15,tokens:'150,000,000',lock:'12mo cliff + 24mo'},
+  {cat:'Treasury',pct:20,tokens:'200,000,000',lock:'DAO controlled'},
+  {cat:'Marketing',pct:10,tokens:'100,000,000',lock:'12 months linear'},
+  {cat:'Advisors',pct:5,tokens:'50,000,000',lock:'18 months linear'},
+];
+const tbody=document.getElementById('allocBody');
+allocData.forEach(a=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td>${a.cat}</td>
+    <td>${a.pct}%</td>
+    <td style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--muted)">${a.tokens}</td>
+    <td class="alloc-bar-cell"><div class="alloc-bar-track"><div class="alloc-bar-fill" style="width:${a.pct*5}%"></div></div></td>
+    <td class="lock">${a.lock}</td>`;
+  tbody.appendChild(tr);
+});
+
+// ── Roadmap ──
+const tlData=[
+  {q:'Q4 2024',title:'Genesis',done:true,items:['Protocol architecture finalized','Core team assembled (18 engineers)','Seed round: $3.2M raised','Testnet v1 deployed']},
+  {q:'Q1 2025',title:'Presale',active:true,items:['Public presale Phase 1 & 2','Smart contract audit complete','Mainnet beta launch','CEX partnership agreements signed']},
+  {q:'Q2 2025',title:'Launch',done:false,items:['$ASTRA lists on Binance & Coinbase','Mainnet v1.0 live','Liquidity mining program begins','Cross-chain bridge Ethereum ↔ Solana']},
+  {q:'Q3 2025',title:'Scale',done:false,items:['DAO governance goes live','Institutional liquidity partnerships','10+ chain integrations','$1B TVL target']},
+];
+tlData.slice(0,2).forEach(t=>renderTL(document.getElementById('timeline1'),t));
+tlData.slice(2).forEach(t=>renderTL(document.getElementById('timeline2'),t));
+function renderTL(container,t){
+  const div=document.createElement('div');
+  div.className='tl-item'+(t.done?' done':t.active?' active':'');
+  div.innerHTML=`
+    <div class="tl-date">${t.q}</div>
+    <div class="tl-title">${t.title}</div>
+    <ul class="tl-items">
+      ${t.items.map((x,i)=>`<li class="${t.done&&i<3?'done-item':''}">${x}</li>`).join('')}
+    </ul>`;
+  container.appendChild(div);
+}
+
+// ── FAQ ──
+const faqs=[
+  {q:'What is ASTRA?',a:'ASTRA is a cross-chain liquidity infrastructure protocol that enables seamless asset transfers and optimized yield across 15+ blockchain networks. The $ASTRA token powers governance, fee discounts, and staking rewards.'},
+  {q:'When does the presale end?',a:'Phase 2 of the presale ends in 14 days. Phase 3 will begin immediately after at a 40% higher price. The exchange listing is scheduled for Q2 2025.'},
+  {q:'What exchanges will $ASTRA list on?',a:'We have signed listing agreements with Binance and Coinbase. Additional CEX listings on OKX and Bybit are in negotiation and expected within 30 days of mainnet launch.'},
+  {q:'Is there a vesting period?',a:'Presale tokens have a 6-month linear vesting schedule beginning at exchange listing. 10% unlocks at TGE (Token Generation Event), then equal monthly unlocks for 5 months.'},
+  {q:'How do I claim my tokens?',a:'After listing, return to this site and connect the same wallet you used to purchase. Click "Claim Tokens" and your unlocked $ASTRA will be sent directly to your wallet.'},
+];
+const fi=document.getElementById('faqInner');
+faqs.forEach(f=>{
+  const item=document.createElement('div');item.className='faq-item';
+  item.innerHTML=`<div class="faq-q">${f.q}<span class="faq-plus">+</span></div><div class="faq-a">${f.a}</div>`;
+  item.querySelector('.faq-q').addEventListener('click',()=>{
+    const open=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(x=>x.classList.remove('open'));
+    if(!open)item.classList.add('open');
+  });
+  fi.appendChild(item);
+});
+
+// ── Scroll reveal ──
+const ro=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+</script>
+</body>
+</html>
